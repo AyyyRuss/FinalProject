@@ -20,9 +20,11 @@
           <path d="M18 22h28c5.523 0 10 4.477 10 10v12c0 5.523-4.477 10-10 10H26" stroke="currentColor" stroke-width="4" stroke-linecap="round"></path>
           <path d="M18 30h8M18 38h16" stroke="currentColor" stroke-width="4" stroke-linecap="round"></path>
         </svg>
+
         <div>
-          <p>TaskFlow Solutions</p>
-          <h1>Interactive Task Manager</h1>
+          <p class="brand-kicker">TaskFlow Solutions</p>
+          <h1>Super Saiyan Checklist</h1>
+          <p class="hero-tagline">Unleash Your Potential</p>
         </div>
       </div>
 
@@ -34,10 +36,37 @@
       </button>
     </header>
 
+    <section class="hero-panel" aria-label="Progress overview">
+      <div>
+        <p class="hero-label">Character Information</p>
+        <h2 class="hero-title">Train Harder, Work Smarter</h2>
+      </div>
+
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <span class="hero-stat-label">XP</span>
+          <strong id="xpCount">0</strong>
+        </div>
+        <div class="hero-stat">
+          <span class="hero-stat-label">Level</span>
+          <strong id="levelCount">1</strong>
+        </div>
+        <div class="hero-stat">
+          <span class="hero-stat-label">Completion</span>
+          <strong id="completionRate">0%</strong>
+        </div>
+      </div>
+    </section>
+
     <main id="main-content" class="layout">
       <section class="panel composer" aria-labelledby="form-heading">
-        <h2 id="form-heading" class="panel-title">Add a task</h2>
-        <p class="panel-copy">Create, style, update, and remove tasks with clean client-side JavaScript.</p>
+        <div class="panel-header-row">
+          <div>
+            <h2 id="form-heading" class="panel-title">Add a task</h2>
+            <p class="panel-copy">Create, edit, delete, and complete tasks with live visual feedback.</p>
+          </div>
+          <span class="mini-chip">Live</span>
+        </div>
 
         <form id="taskForm" novalidate>
           <div class="field">
@@ -81,7 +110,7 @@
           </div>
         </form>
 
-        <p class="footer-note">Console updates log the full task array with JSON.stringify(tasks).</p>
+        <p class="footer-note">Every add, update, and delete logs the full task list with JSON.stringify(tasks).</p>
       </section>
 
       <section class="panel workspace" aria-labelledby="tasks-heading">
@@ -92,9 +121,15 @@
           </div>
 
           <div class="pill-row" aria-label="Task summary">
-            <span class="pill" id="totalCount">0 tasks</span>
-            <span class="pill" id="completeCount">0 done</span>
-            <span class="pill" id="importantCount">0 important</span>
+            <span class="pill pill-total" id="totalCount">0 tasks</span>
+            <span class="pill pill-complete" id="completeCount">0 done</span>
+            <span class="pill pill-important" id="importantCount">0 important</span>
+          </div>
+        </div>
+
+        <div class="progress-wrap" aria-label="Overall progress">
+          <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
           </div>
         </div>
 
