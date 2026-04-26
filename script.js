@@ -9,6 +9,10 @@ const totalCount = document.getElementById("totalCount");
 const completeCount = document.getElementById("completeCount");
 const importantCount = document.getElementById("importantCount");
 const themeToggle = document.querySelector("[data-theme-toggle]");
+const xpCount = document.getElementById("xpCount");
+const levelCount = document.getElementById("levelCount");
+const completionRate = document.getElementById("completionRate");
+const progressFill = document.getElementById("progressFill");
 
 let tasks = [];
 let nextId = 1;
@@ -50,6 +54,18 @@ function getPriorityClass(priority) {
   return "priority-low";
 }
 
+function getPriorityCardClass(priority) {
+  if (priority === "High") {
+    return "priority-card-high";
+  }
+
+  if (priority === "Medium") {
+    return "priority-card-medium";
+  }
+
+  return "priority-card-low";
+}
+
 function formatDate(dateValue) {
   return new Date(dateValue).toLocaleDateString(undefined, {
     year: "numeric",
@@ -58,21 +74,100 @@ function formatDate(dateValue) {
   });
 }
 
+function getXpValue() {
+  return tasks.reduce((total, task) => {
+    let points = 10;
+
+    if (task.priority === "High") {
+      points += 20;
+    } else if (task.priority === "Medium") {
+      points += 10;
+    } else {
+      points += 5;
+    }
+
+    if (task.isImportant) {
+      points += 15;
+    }
+
+    if (task.isCompleted) {
+      points += 25;
+    }
+
+    return total + points;
+  }, 0);
+}
+
+function animateNumber(element, target) {
+  const start = Number(element.dataset.value || 0);
+  const duration = 400;
+  const startTime = performance.now();
+
+  function step(timestamp) {
+    const progress = Math.min((timestamp - startTime) / duration, 1);
+    const value = Math.round(start + (target - start) * progress);
+    element.textContent = value;
+    element.dataset.value = value;
+
+    if (progress < 1) {
+      requestAnimationFrame(step);
+    }
+  }
+
+  requestAnimationFrame(step);
+}
+
+function animateTextNumber(element, target, suffix = "") {
+  const start = Number(element.dataset.value || 0);
+  const duration = 400;
+  const startTime = performance.now();
+
+  function step(timestamp) {
+    const progress = Math.min((timestamp - startTime) / duration, 1);
+    const value = Math.round(start + (target - start) * progress);
+    element.textContent = `${value}${suffix}`;
+    element.dataset.value = value;
+
+    if (progress < 1) {
+      requestAnimationFrame(step);
+    }
+  }
+
+  requestAnimationFrame(step);
+}
+
+function triggerWinFlash() {
+  const heroPanel = document.querySelector(".hero-panel");
+  heroPanel.classList.remove("flash-win");
+  void heroPanel.offsetWidth;
+  heroPanel.classList.add("flash-win");
+}
+
 function updateSummary() {
   const completedTasks = tasks.filter(task => task.isCompleted).length;
   const importantTasks = tasks.filter(task => task.isImportant).length;
+  const totalTasks = tasks.length;
+  const percent = totalTasks ? Math.round((completedTasks / totalTasks) * 100) : 0;
+  const xp = getXpValue();
+  const level = Math.max(1, Math.floor(xp / 100) + 1);
 
-  totalCount.textContent = `${tasks.length} ${tasks.length === 1 ? "task" : "tasks"}`;
+  totalCount.textContent = `${totalTasks} ${totalTasks === 1 ? "task" : "tasks"}`;
   completeCount.textContent = `${completedTasks} done`;
   importantCount.textContent = `${importantTasks} important`;
+
+  animateNumber(xpCount, xp);
+  animateNumber(levelCount, level);
+  animateTextNumber(completionRate, percent, "%");
+  progressFill.style.width = `${percent}%`;
 }
 
 function renderTasks() {
   if (tasks.length === 0) {
     taskManager.innerHTML = `
       <div class="empty-state">
-        <h3 class="panel-title">No tasks yet</h3>
-        <p class="panel-copy">Add your first task to start tracking priority, importance, and completion.</p>
+        <div class="empty-state-icon">★</div>
+        <h3 class="panel-title">No missions yet</h3>
+        <p class="panel-copy">Add your first task to begin your progress run and build momentum.</p>
       </div>
     `;
     updateSummary();
@@ -80,7 +175,7 @@ function renderTasks() {
   }
 
   taskManager.innerHTML = tasks.map(task => `
-    <article class="task-card" data-id="${task.id}">
+    <article class="task-card ${getPriorityCardClass(task.priority)}" data-id="${task.id}">
       <div class="task-top">
         <div>
           <h3 class="task-name">${task.name}</h3>
@@ -117,20 +212,27 @@ function renderTasks() {
 
     const taskName = taskCard.querySelector(".task-name");
 
+    taskCard.style.boxShadow = "";
+    taskCard.style.borderColor = "";
+    taskCard.style.background = "";
+    taskName.style.color = "";
+    taskName.style.textDecoration = "";
+    taskName.style.opacity = "";
+
     if (task.isImportant) {
-      taskCard.style.borderColor = "rgba(161, 53, 68, 0.35)";
-      taskCard.style.boxShadow = "inset 0 0 0 1px rgba(161, 53, 68, 0.20)";
+      taskCard.style.borderColor = "rgba(255, 93, 93, 0.45)";
+      taskCard.style.boxShadow = "0 0 0 1px rgba(255, 93, 93, 0.18), 0 0 26px rgba(255, 93, 93, 0.12)";
       taskName.style.color = "red";
     }
 
     if (task.isCompleted) {
       taskName.style.textDecoration = "line-through";
-      taskName.style.opacity = "0.7";
-      taskCard.style.background = "color-mix(in srgb, var(--color-success) 10%, var(--color-surface-2) 90%)";
+      taskName.style.opacity = "0.72";
+      taskCard.style.background = "linear-gradient(180deg, rgba(123, 255, 92, 0.12), rgba(255, 255, 255, 0.04)), var(--color-surface-2)";
     }
 
-    if (!task.isImportant && !task.isCompleted) {
-      taskCard.style.boxShadow = "none";
+    if (task.isImportant && task.isCompleted) {
+      taskCard.style.boxShadow = "0 0 0 1px rgba(255, 93, 93, 0.2), 0 0 24px rgba(123, 255, 92, 0.12)";
     }
   });
 
@@ -161,10 +263,16 @@ function createTask() {
       return;
     }
 
+    const wasCompleted = taskToUpdate.isCompleted;
+
     taskToUpdate.name = taskName;
     taskToUpdate.priority = taskPriorityInput.value;
     taskToUpdate.isImportant = taskImportantInput.checked;
     taskToUpdate.isCompleted = taskCompletedInput.checked;
+
+    if (!wasCompleted && taskToUpdate.isCompleted) {
+      triggerWinFlash();
+    }
 
     logTasks();
     renderTasks();
@@ -182,6 +290,11 @@ function createTask() {
   };
 
   tasks.push(task);
+
+  if (task.isCompleted) {
+    triggerWinFlash();
+  }
+
   logTasks();
   renderTasks();
   resetFormState();
@@ -204,7 +317,13 @@ function toggleTaskCompletion(taskId) {
     return;
   }
 
+  const wasCompleted = task.isCompleted;
   task.isCompleted = !task.isCompleted;
+
+  if (!wasCompleted && task.isCompleted) {
+    triggerWinFlash();
+  }
+
   logTasks();
   renderTasks();
 }
@@ -266,4 +385,5 @@ themeToggle.addEventListener("click", () => {
 });
 
 setTheme(currentTheme);
+updateSummary();
 renderTasks();
