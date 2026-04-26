@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TaskFlow Solutions - Interactive Task Manager</title>
+  <link rel="preconnect" href="https://api.fontshare.com">
+  <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Skip to content</a>
+
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand" aria-label="TaskFlow Solutions">
+        <svg viewBox="0 0 64 64" role="img" aria-label="TaskFlow Solutions logo" fill="none">
+          <rect x="8" y="10" width="22" height="44" rx="7" stroke="currentColor" stroke-width="4"></rect>
+          <path d="M18 22h28c5.523 0 10 4.477 10 10v12c0 5.523-4.477 10-10 10H26" stroke="currentColor" stroke-width="4" stroke-linecap="round"></path>
+          <path d="M18 30h8M18 38h16" stroke="currentColor" stroke-width="4" stroke-linecap="round"></path>
+        </svg>
+        <div>
+          <p>TaskFlow Solutions</p>
+          <h1>Interactive Task Manager</h1>
+        </div>
+      </div>
+
+      <button class="theme-toggle" type="button" data-theme-toggle aria-label="Switch theme">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="5"></circle>
+          <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"></path>
+        </svg>
+      </button>
+    </header>
+
+    <main id="main-content" class="layout">
+      <section class="panel composer" aria-labelledby="form-heading">
+        <h2 id="form-heading" class="panel-title">Add a task</h2>
+        <p class="panel-copy">Create, style, update, and remove tasks with clean client-side JavaScript.</p>
+
+        <form id="taskForm" novalidate>
+          <div class="field">
+            <label for="taskName">Task name</label>
+            <input
+              id="taskName"
+              name="taskName"
+              type="text"
+              maxlength="100"
+              placeholder="Finish JavaScript project"
+              required
+            >
+          </div>
+
+          <div class="field">
+            <label for="taskPriority">Priority</label>
+            <select id="taskPriority" name="taskPriority">
+              <option value="High">High</option>
+              <option value="Medium" selected>Medium</option>
+              <option value="Low">Low</option>
+            </select>
+          </div>
+
+          <fieldset class="field checkbox-grid">
+            <legend>Task status</legend>
+
+            <label class="check-row" for="taskImportant">
+              <input id="taskImportant" name="taskImportant" type="checkbox">
+              <span>Mark as important.</span>
+            </label>
+
+            <label class="check-row" for="taskCompleted">
+              <input id="taskCompleted" name="taskCompleted" type="checkbox">
+              <span>Mark as completed.</span>
+            </label>
+          </fieldset>
+
+          <div class="button-row">
+            <button class="btn btn-primary" type="submit" id="submitButton">Add task</button>
+            <button class="btn btn-secondary" type="reset">Clear form</button>
+          </div>
+        </form>
+
+        <p class="footer-note">Console updates log the full task array with JSON.stringify(tasks).</p>
+      </section>
+
+      <section class="panel workspace" aria-labelledby="tasks-heading">
+        <div class="statusbar">
+          <div>
+            <h2 id="tasks-heading" class="panel-title">Task board</h2>
+            <p class="panel-copy">Tasks appear below in the dynamic <code>#taskmanager</code> area.</p>
+          </div>
+
+          <div class="pill-row" aria-label="Task summary">
+            <span class="pill" id="totalCount">0 tasks</span>
+            <span class="pill" id="completeCount">0 done</span>
+            <span class="pill" id="importantCount">0 important</span>
+          </div>
+        </div>
+
+        <div id="taskmanager" aria-live="polite"></div>
+      </section>
+    </main>
+  </div>
+</body>
+</html>
